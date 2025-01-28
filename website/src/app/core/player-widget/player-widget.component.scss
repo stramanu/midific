@@ -1,0 +1,29 @@
+:host {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    play-button {
+        width: 50px;
+        height: 50px;
+        box-sizing: border-box;
+        background-color: var(--primary-blue);
+        ::ng-deep {
+            .play-btn,
+            .play-btn,
+            loader {
+                background-color: none!important;
+            }
+        }
+    }
+    .visualizer {
+        flex: 1;
+        width: 100%;
+        height: 50px;
+        box-sizing: border-box;
+    }
+}

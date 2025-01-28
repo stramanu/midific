@@ -1,0 +1,39 @@
+<div class="header-top">
+    @if(!logoOnly){
+        <div class="left">
+            <a routerLink="/" class="logo desktop-only magnetic" title="midific">
+                <img width="200" height="30" ngSrc="/logo.svg" alt="MIDIFIC" priority>
+            </a>
+            @if (isPlatformBrowser) {
+                <button class="theme-toggle mobile-only magnetic" (click)="toggleTheme()" title="Toggle Theme">
+                    <ng-lottie width="50px" height="30px" [options]="themeToggleLottieOptions" (animationCreated)="animationCreated($event)" />
+                </button>
+            }
+        </div>
+        <div class="center">
+            <a routerLink="/" class="logo mobile-only magnetic" title="midific">
+                <img width="200" height="30" ngSrc="/logo.svg" alt="MIDIFIC" priority>
+            </a>
+            <search-box class="desktop-only magnetic"></search-box>
+        </div>
+        <div class="right">
+            @if (isPlatformBrowser) {
+                <button class="theme-toggle desktop-only magnetic" (click)="toggleTheme()" title="Toggle Theme">
+                    <ng-lottie width="50px" height="30px" [options]="themeToggleLottieOptions" (animationCreated)="animationCreated($event)" />
+                </button>
+            }
+            <a routerLink="/checkout" class="magnetic" title="midific">
+                <minicart></minicart>
+            </a>
+        </div>
+    }@else{
+        <div class="text-center center">
+            <a routerLink="/" class="logo magnetic" title="midific">
+                <img width="200" height="30" ngSrc="/logo.svg" alt="MIDIFIC" priority>
+            </a>
+        </div>
+    }
+</div>
+@if(!logoOnly){
+    <search-box class="mobile-only magnetic"></search-box>
+}

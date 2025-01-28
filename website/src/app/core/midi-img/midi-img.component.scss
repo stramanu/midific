@@ -1,0 +1,41 @@
+:host {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    border-radius: 3px;
+    contain: layout;
+    border: solid 2px #eaeaea;
+    
+    & > svg {
+        pointer-events: none;
+        --pattern-rotate: 20deg;
+        transform: scale(calc(sin(var(--pattern-rotate)) + cos(var(--pattern-rotate)))) rotate(calc(0deg - var(--pattern-rotate)));
+    }
+
+    & > div {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 50%;
+        left: 50%;
+        transform: rotate(-20deg) translate(-50%, -50%);
+        transform-origin: 0% 0%;
+        transition: opacity ease 0.2s;
+        opacity: 0;
+        &.loaded {
+            opacity: 1;
+        }
+    }
+
+    img {
+        display: block;
+        width: 100%;
+        height: auto;
+        transition: opacity ease 0.2s;
+        opacity:0;
+        &.loaded {
+            opacity: 1;
+        }
+    }
+
+}

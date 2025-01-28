@@ -1,0 +1,47 @@
+@if(midi != null){
+    <div class="midi">
+        <div class="main-info magnetic">
+            <midi-img [midi]="midi" [priority]="true"></midi-img>
+        </div>
+        <div class="midi-info">
+            <player-widget [midi]="midi" [audioContext]="audioContext" class="magnetic"></player-widget>
+            <div class="title-price">
+                <h1 class="title">{{ midi.name }}</h1>
+                <p class="price">€{{ midi.price }}</p>
+            </div>
+            <div class="actions">
+                @if(app.isInCart(midi)){
+                    <button class="btn btn-primary magnetic" routerLink="/checkout" title="Proceed to checkout">
+                        Proceed to checkout
+                    </button>
+                }@else{
+                    <button class="btn btn-primary magnetic" (click)="app.addToCart(midi, $event)" title="Add to Cart">
+                        <img class="icon-cart" width="20" height="20" ngSrc="/icons/bag.svg" alt="Checkout" />
+                        Add to Cart
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@defer (hydrate on viewport) {
+    @if(relatedMidi().length > 0){
+        <div class="related-midi">
+            <h2 class="text-center">You might also like</h2>
+            <midi-list [items]="relatedMidi"></midi-list>
+        </div>
+    }
+}
+
+@defer (hydrate on viewport) {
+    @if (forYouMidiItems().length > 0) {
+        <h2 class="page-title">You may like</h2>
+        <midi-list #midiList [items]="forYouMidiItems"></midi-list>
+    }
+}
+
+@defer (hydrate on viewport) {
+    <h2 class="page-title">Latest</h2>
+    <midi-list-latest [filterOutItems]="forYouMidiItems"></midi-list-latest>
+}

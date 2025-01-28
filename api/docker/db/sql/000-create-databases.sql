@@ -1,0 +1,48 @@
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+SET NAMES utf8mb4;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE='NO_AUTO_VALUE_ON_ZERO', SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+# Dump della tabella midi
+# ------------------------------------------------------------
+
+CREATE TABLE `midi` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `price` float DEFAULT NULL,
+  `file` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `chart` int DEFAULT '0',
+  PRIMARY KEY (`id`),
+  FULLTEXT KEY `IDX_762e38ccbb17894d75e9f6edfc` (`slug`),
+  FULLTEXT KEY `IDX_7d3aeb0b109dfa030996d18f5e` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+# Dump della tabella midi_related_midi
+# ------------------------------------------------------------
+
+CREATE TABLE `midi_related_midi` (
+  `midiId_1` int NOT NULL,
+  `midiId_2` int NOT NULL,
+  PRIMARY KEY (`midiId_1`,`midiId_2`),
+  KEY `IDX_cbeb2a8a45599036118ff33c62` (`midiId_1`),
+  KEY `IDX_d021cb6744481bcdd8e4928f1d` (`midiId_2`),
+  CONSTRAINT `FK_cbeb2a8a45599036118ff33c620` FOREIGN KEY (`midiId_1`) REFERENCES `midi` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_d021cb6744481bcdd8e4928f1db` FOREIGN KEY (`midiId_2`) REFERENCES `midi` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

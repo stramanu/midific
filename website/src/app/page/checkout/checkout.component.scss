@@ -1,0 +1,102 @@
+@use "../../../styles/mixins" as mix;
+:host {
+    display: block;
+    // h1.page-title {
+    //     margin: 60px 0px 80px;
+    // }
+    .divider {
+        margin: 50px 20%;
+        background: var(--background-2);
+        height: 1px;
+        width: 60%;
+    }
+    .container {
+        display: flex;
+        gap: 10px;
+        padding: 15px 15px 40px;
+        @include mix.mobile {
+            flex-direction: column;
+        }
+        .items, .totals-info {
+            padding: 10px 15px;
+            background: var(--background-2);
+            border-radius: 10px;
+        }
+        .items {
+            max-height: 100vh;
+            overflow: auto;
+            @include mix.desktop {
+                flex: 7;
+            }
+            & > li {
+                display: flex;
+                gap: 10px;
+                &:not(.checked) {
+                    opacity: 0.3;
+                }
+                .actions {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 15px;
+                    // justify-content: space-between;
+                    button {
+                        img {
+                            display: block;
+                        }
+                    }
+                }
+                .image {
+                    position: relative;
+                    width: 100px;
+                    height: 100px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    midi-img {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        aspect-ratio: 1 / 1;
+                    }
+                    play-button {
+                        ::ng-deep {
+                            .play-btn,
+                            .pause-btn,
+                            .loader-wrapper {
+                                background-color: rgb(60 60 60 / 36%);
+                            }
+                        }
+                    }
+                }
+                .info {
+                    flex: 1;
+                }
+            }
+        }
+        .totals-info {
+            position: sticky;
+            @include mix.desktop {
+                flex: 5;
+                top: 0;
+            }
+            @include mix.mobile {
+                bottom: 0;
+            }
+            &.disabled {
+                opacity: 0.3;
+                pointer-events: none;
+            }
+            .totals {
+                .total {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 10px 0px;
+                    font-size: 1.3rem;
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+}

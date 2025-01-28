@@ -1,0 +1,80 @@
+<div class="container">
+    <ul class="items">
+        @for (midi of store.cart.items(); track $index){
+            <li [class]="{'checked': midi.checked}">
+                <div class="actions">
+                    <label class="form-control">
+                        <input type="checkbox" [ngModel]="midi.checked" (change)="checkToggleItem(midi)" />
+                    </label>
+                    <button (click)="app.removeFromCart(midi)" title="Remove from cart">
+                        <img class="icon-trash" width="24" height="24" ngSrc="/icons/delete.svg" alt="Remove from cart" />
+                    </button>
+                </div>
+                <div class="image">
+                    <midi-img [priority]="$index == 0" [midi]="midi"></midi-img>
+                    <play-button [midi]="midi"></play-button>
+                </div>
+                <div class="info">
+                    <div class="title" routerLink="/midi/{{ midi.slug }}" [title]="midi.name">
+                        <b>
+                            {{ midi.name }}
+                        </b>
+                    </div>
+                    <p class="price">
+                        ${{ midi.price }}
+                    </p>
+                </div>
+            </li>
+        }
+    </ul>
+
+    <div class="totals-info" [class]="{'disabled': store.cart.total() <= 0}">
+        <div class="user-info">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" email [(ngModel)]="store.user().email" />
+            </div>
+        </div>
+        <div class="totals">
+            <div class="total">
+                <span>Total:</span>
+                <span>{{ store.cart.total() }}</span>
+            </div>
+            <!-- <button class="btn btn-secondary w-100 py-2" type="submit" (click)="checkout()" title="Pay Now">
+                Pay Now
+            </button> -->
+            <div [formGroup]="paymentElementForm">
+                
+                <input matInput placeholder="Email" type="email" formControlName="email" />
+                
+                @if (elementsOptions.clientSecret) {
+                  <ngx-stripe-elements
+                    [stripe]="stripe"
+                    [elementsOptions]="elementsOptions"
+                  >
+                    <ngx-stripe-express-checkout [options]="options" />
+                    <ngx-stripe-payment [options]="paymentElementOptions" />
+                  </ngx-stripe-elements>
+                }
+                <button class="btn btn-primary w-100 py-2" type="submit" (click)="pay()" title="Pay">
+                    Pay
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="divider"></div>
+
+@defer (hydrate on viewport) {
+    @if (forYouMidiItems().length > 0) {
+        <h2 class="page-title">You may like</h2>
+        <midi-list [items]="forYouMidiItems"></midi-list>
+    }
+}
+
+@defer (hydrate on viewport) {
+    <h2 class="page-title">Latest</h2>
+    <midi-list-latest [filterOutItems]="forYouMidiItems"></midi-list-latest>   
+}

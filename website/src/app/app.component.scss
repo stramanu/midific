@@ -1,0 +1,46 @@
+:host {
+    display: block;
+
+    .page-title {
+        text-align: center;
+        font-size: 1.2rem;
+        margin: 0px 0px 20px;
+    }
+
+    .loader-wrapper {
+        justify-content: center;
+        margin-top: 40px;
+        grid-template-columns: 1fr;
+    }
+
+    ::ng-deep .main {
+        & > *:not(router-outlet) {
+            min-height: 50vh;
+            min-height: calc(100vh - 84px);
+            margin-bottom: 50px;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+    }
+
+    cursor {
+        mix-blend-mode: screen;
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            mix-blend-mode: screen;
+            z-index: 1;
+            pointer-events: none;
+        }
+    };
+}
+[data-theme="light"] :host {
+    cursor {
+        mix-blend-mode: difference;
+        filter: saturate(20) brightness(0.3);
+        opacity: 0.8;
+    }
+}

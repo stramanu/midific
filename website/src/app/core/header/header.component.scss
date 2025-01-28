@@ -1,0 +1,62 @@
+@use "../../../styles/mixins" as mix;
+:host {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--header-background);
+    transition: background 0.3s;
+    backdrop-filter: blur(15px);
+    padding: 1rem 1.5rem;
+    @include mix.mobile {
+        padding: 1rem;
+    }
+
+    .header-top {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        .center {
+            width: 100%;
+            text-align: center;
+        }
+        
+        .left,.center,.right {
+            flex: 1;
+        }
+    
+        .left,.right {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+    
+        .left {
+            justify-content: flex-start;
+        }
+    
+        .right {
+            justify-content: flex-end;
+        }
+
+        .logo {
+            text-align: center;
+            font-weight: bold;
+            font-size: 2rem;
+            text-decoration: none!important;
+        }
+    }
+    search-box.mobile-only {
+        padding: 0px;
+    }
+}
+
+[data-theme="light"] :host {
+    .header-top {
+        .logo {
+            filter: invert(0.75)
+        }
+    }
+}

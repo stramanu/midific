@@ -1,0 +1,26 @@
+:host {
+    display: block;
+    padding: 5px 15px;
+    text-align: center;
+    input {
+        background: rgb(255 255 255 / 7%);
+        border-radius: 30px;
+        border: solid 1px var(--border);
+        padding: 10px 30px;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 1rem;
+        color: var(--text-color)!important;
+        background-image: url('/icons/search.svg');
+        background-repeat: no-repeat;
+        background-position: 95% 50%;
+        background-size: 17px;
+        max-width: 500px;
+        &:focus {
+            outline-color: #ddd;
+            outline-width: 1px !important;
+            outline-style: solid;
+        }
+    }
+}

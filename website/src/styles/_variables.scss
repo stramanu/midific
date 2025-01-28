@@ -1,0 +1,90 @@
+@use "sass:map";
+
+$mobile-breakpoint: 768px;
+$large-desktop-breakpoint: 1024px;
+
+@mixin mobile {
+    @media (max-width: $mobile-breakpoint) { @content; }
+}
+
+@mixin desktop {
+    @media (min-width: ($mobile-breakpoint + 1)) { @content; }
+}
+
+@mixin large-desktop {
+    @media (min-width: $large-desktop-breakpoint) { @content; }
+}
+
+
+$light-theme: (
+  primary-blue: #0071EB,
+  secondary-orange: #FFAA5F,
+  background: #F9F9F9,
+  background-2: rgb(189 189 189 / 31%),
+  header-background: rgb(249 249 249 / 31%),
+  text: #333333,
+  border: #d9d9d9,
+  support-green: #008057,
+  accent-purple: #9B59B6,
+  price-green: #28A745,
+  price-red: #FF4D4D,
+  price-gold: #D4AF37,
+  price-original: #B0B0B0,
+);
+
+$dark-theme: (
+  primary-blue: #339AFF,
+  secondary-orange: #FF8E3C,
+  background: #121212,
+  background-2: rgb(25 25 25),
+  header-background: rgb(17 17 17 / 84%),
+  text: #E0E0E0,
+  border: #333,
+  support-green: #00E5A5,
+  accent-purple: #B084D7,
+  price-green: #44D879,
+  price-red: #FF6B6B,
+  price-gold: #E6C56E,
+  price-original: #6C6C6C,
+);
+
+// Mixin per applicare il tema dinamico
+@mixin apply-theme($theme) {
+  --primary-blue: #{map.get($theme, "primary-blue")};
+  --secondary-orange: #{map.get($theme, "secondary-orange")};
+  --background: #{map.get($theme, "background")};
+  --background-2: #{map.get($theme, "background-2")};
+  --header-background: #{map.get($theme, "header-background")};
+  --text: #{map.get($theme, "text")};
+  --border: #{map.get($theme, "border")};
+  --support-green: #{map.get($theme, "support-green")};
+  --accent-purple: #{map.get($theme, "accent-purple")};
+  
+  --price-green: #{map.get($theme, "price-green")};
+  --price-red: #{map.get($theme, "price-red")};
+  --price-gold: #{map.get($theme, "price-gold")};
+  --price-original: #{map.get($theme, "price-original")};
+}
+
+// Applicazione del tema chiaro
+[data-theme="light"] {
+    @include apply-theme($light-theme);
+}
+
+// Applicazione del tema scuro (opzionale, usa preferenze di sistema o attributo per cambiarlo)
+[data-theme="dark"] {
+  @include apply-theme($dark-theme);
+}
+
+// @media (prefers-color-scheme: dark) {
+//   :root {
+//     @include apply-theme($dark-theme);
+//   }
+// }
+
+:root {
+    --loader-color: #adadad;
+    --max-width-container: 1000px;
+    --form-control-color: #fff;
+    --form-control-disabled: #959495;
+}

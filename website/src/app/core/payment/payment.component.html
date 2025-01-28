@@ -1,0 +1,14 @@
+<main class="form-checkout w-100 m-auto">
+    <div>
+        <h1 class="h3 mb-4 fw-normal">Angular Stripe Payment</h1>
+
+        <div class="form-floating mb-2">
+            @if (midi) {
+                {{ midi.name }} - {{ midi.price }}
+            }
+            <label for="floatingAmount">Amount</label>
+        </div>
+
+        <button class="btn btn-primary w-100 py-2" type="submit" (click)="checkout()" title="Pay Now">Pay Now</button>
+    </div>
+</main>

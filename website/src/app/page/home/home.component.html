@@ -1,0 +1,8 @@
+@if (forYouMidiItems().length > 0) {
+    <h1 class="page-title">You may like</h1>
+    <midi-list #midiList [items]="forYouMidiItems"></midi-list>
+    <h2 class="page-title">Latest Midi Files</h2>
+}@else{
+    <h1 class="page-title">Latest Midi Files</h1>
+}
+<midi-list-latest [items]="latestMidiItems" [filterOutItems]="forYouMidiItems"></midi-list-latest>

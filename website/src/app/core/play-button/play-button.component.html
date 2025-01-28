@@ -1,0 +1,8 @@
+
+@if (isPlaying) {
+    <div class="pause-btn" (click)="pause($event)"></div>
+}@else if (isLoading()) {
+    <div class="loader-wrapper"><loader></loader></div>
+}@else{
+    <div class="play-btn" (click)="play($event)"></div>
+}

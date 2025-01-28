@@ -1,0 +1,21 @@
+<header></header>
+
+@if(pageTitle){
+  <h1 class="page-title">{{ pageTitle }}</h1>
+}
+
+<div class="main">
+  <router-outlet></router-outlet>
+</div>
+
+@if(loading){
+  <div class="loader-wrapper">
+      <loader></loader>
+  </div>
+}
+
+<footer></footer>
+
+<cursor>
+  <canvas #canvasfx></canvas>
+</cursor>
