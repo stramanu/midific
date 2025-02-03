@@ -1,8 +1,10 @@
-@if (forYouMidiItems().length > 0) {
-    <h1 class="page-title">You may like</h1>
-    <midi-list #midiList [items]="forYouMidiItems"></midi-list>
-    <h2 class="page-title">Latest Midi Files</h2>
-}@else{
+<midi-list #userRelatedMidiList [loadItemsOfType]="'user-related'" [hideIfEmpty]="true" [loadOnScroll]="false" [context]="'home'">
+    <h1 class="page-title" slot="before">You might also like</h1>
+</midi-list>
+
+@if (userRelatedMidiList.isEmpty()) {
     <h1 class="page-title">Latest Midi Files</h1>
+}@else{
+    <h2 class="page-title">Latest Midi Files</h2>
 }
-<midi-list-latest [items]="latestMidiItems" [filterOutItems]="forYouMidiItems"></midi-list-latest>
+<midi-list [loadItemsOfType]="'latest'" [context]="'home'"></midi-list>

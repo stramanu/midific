@@ -14,6 +14,20 @@ export interface PaymentIntent {
   client_secret: string;
 }
 
+interface GetOptions {
+  url: string, 
+  params: {
+    [param: string]: string | number | boolean | readonly (string | number | boolean)[]
+  }, 
+  abortSignal?: AbortSignal
+}
+
+interface PostOptions {
+  url: string, 
+  body: any, 
+  abortSignal?: AbortSignal
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,6 +48,33 @@ export class ApiService {
 
   constructor() {
     if (this.isPlatformBrowser) (this.window as any).ApiService = this;
+  }
+
+  /*
+  * fetch get interface
+  */
+  public async get<T>(opt: GetOptions) {
+    const url = new URL(opt.url)
+     url.search = new URLSearchParams(Object.fromEntries(Object.entries(opt.params).map(([key, value]) => [key, String(value)]))).toString();
+    const response = await fetch(url.toString(), {
+      signal: opt.abortSignal
+    })
+    return response.json() as Promise<T>
+  }
+
+  /*
+  * fetch post interface
+  */
+  public async post<T>(opt: PostOptions) {
+    const response = await fetch(opt.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(opt.body),
+      signal: opt.abortSignal
+    })
+    return response.json() as Promise<T>
   }
 
 
@@ -71,20 +112,30 @@ export class ApiService {
   * Midi API
   */
 
-  public async forYouMidi(page = 0, limit = 6) {
-    return await lastValueFrom(this.http.get<MidiDto[]>(`${this.API_URL_SSR}/midi/for-you`, {
+  public async getUserRelatedMidi(
+    page = 0,
+    limit = 6,
+    exclude: string[] = [],
+  ) {
+    return await lastValueFrom(this.http.get<MidiDto[]>(`${this.API_URL_SSR}/midi/user-related`, {
       params: {
         page: page.toString(),
-        limit: limit.toString()
+        limit: limit.toString(),
+        exclude: JSON.stringify(exclude)
       }
     }))
   }
 
-  public async latestMidi(page = 0, limit = 10) {
+  public async latestMidi(
+    page = 0,
+    limit = 10,
+    exclude: string[] = [],
+  ) {
     return await lastValueFrom(this.http.get<MidiDto[]>(`${this.API_URL_SSR}/midi/latest`, {
       params: {
         page: page.toString(),
-        limit: limit.toString()
+        limit: limit.toString(),
+        exclude: JSON.stringify(exclude)
       }
     }))
   }
@@ -103,13 +154,28 @@ export class ApiService {
     return await lastValueFrom(this.http.get<MidiDto>(`${this.API_URL_SSR}/midi/${slug}`))
   }
 
-  public async getRelatedMidi(slug: string, page = 0, limit = 10) {
-    return await lastValueFrom(this.http.get<MidiDto[]>(`${this.API_URL_SSR}/midi/${slug}/related`, {
+  public async getRelatedMidi(
+    slug: string, 
+    page = 0, 
+    limit = 10, 
+    exclude: string[] = [],
+    abortSignal?: AbortSignal,
+  ) {
+    // return await lastValueFrom(this.http.get<MidiDto[]>(`${this.API_URL_SSR}/midi/${slug}/related`, {
+    //   params: {
+    //     page: page.toString(),
+    //     limit: limit.toString()
+    //   },
+    // }))
+    return await this.get<MidiDto[]>({
+      url: `${this.API_URL_SSR}/midi/${slug}/related`,
       params: {
-        page: page.toString(),
-        limit: limit.toString()
-      }
-    }))
+        page,
+        limit,
+        exclude: JSON.stringify(exclude)
+      },
+      abortSignal
+    })
   }
 
   public async getMidiFile(slug: string) {

@@ -1,10 +1,10 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, ElementRef, HostListener, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { MinicartComponent } from '../minicart/minicart.component';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule, DOCUMENT, NgOptimizedImage, isPlatformBrowser } from '@angular/common';
 import { SearchBoxComponent } from '../search-box/search-box.component';
 import { AppService } from '../../service/app.service';
-import { LottieComponent, AnimationOptions } from 'ngx-lottie';
+import { LottieComponent, AnimationOptions, LottieTransferState } from 'ngx-lottie';
 import { AnimationItem } from 'lottie-web';
 
 @Component({
@@ -27,6 +27,9 @@ export class HeaderComponent implements OnInit {
   private app = inject(AppService);
   public isPlatformBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private window = inject(DOCUMENT).defaultView!;
+  private lottieTransferState = inject(LottieTransferState);
+
+  private el = inject(ElementRef);
 
   private animationItem!: AnimationItem;
   public themeToggleLottieOptions!: AnimationOptions
@@ -49,11 +52,23 @@ export class HeaderComponent implements OnInit {
 
     if (this.isPlatformBrowser) {
       this.themeToggleLottieOptions = {
-        path: '/icons/anim-theme-toggle.json',
-        // animationData: this.lottieTransferState.get('/icons/anim-add-to-cart.lottie'),
+        // path: '/icons/anim-theme-toggle.json',
+        animationData: this.lottieTransferState.get('anim-theme-toggle.json'),
         loop: false,
         autoplay: false
       };
+    }
+  }
+
+  // aggiungi classe "shadow" all'elemento el.nativeElement quando lo scroll è maggiore di 10
+  @HostListener('window:scroll', ['$event'])
+  onScroll() {
+    if (this.isPlatformBrowser) {
+      if (this.window.scrollY > 10) {
+        this.el.nativeElement.classList.add('shadow');
+      } else {
+        this.el.nativeElement.classList.remove('shadow');
+      }
     }
   }
 

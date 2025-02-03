@@ -26,10 +26,10 @@ export const baseAppConfig: ApplicationConfig = {
       withComponentInputBinding()
     ),
     provideClientHydration(
-      withIncrementalHydration()
-      // withHttpTransferCacheOptions({
-      //   includePostRequests: true
-      // })
+      withIncrementalHydration(),
+      withHttpTransferCacheOptions({
+        includePostRequests: true
+      })
     ),
     provideHttpClient(withFetch()),
     provideNgxStripe(),

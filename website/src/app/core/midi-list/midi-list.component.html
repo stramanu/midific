@@ -1,9 +1,13 @@
+<ng-content select="[slot=before]"></ng-content>
 <div class="items">
     <div class="grid">
-        @for(midi of items(); track midi.id){
+        @for(midi of itemsUi(); track midi.id){
             <a [routerLink]="'/midi/'+midi.slug" class="magnetic" [title]="midi.name">
-                <midi-item [priority]="$index == 0" [midi]="midi" [style]="{'--fade-in-delay':itemsFadeInDelay[$index]+'s', opacity:'1', 'transition-duration': itemsFadeInDelay[$index] == 0 ? '0.3s' : ''}"></midi-item>
+                @defer (hydrate on viewport) {
+                    <midi-item [priority]="$index == 0" [midi]="midi" [style]="{'--fade-in-delay':itemsFadeInDelay[$index]+'s', opacity:'1', 'transition-duration': itemsFadeInDelay[$index] == 0 ? '0.3s' : ''}"></midi-item>
+                }
             </a>
         }
     </div>
 </div>
+<ng-content select="[slot=after]"></ng-content>

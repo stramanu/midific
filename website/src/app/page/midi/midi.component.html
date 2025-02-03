@@ -23,25 +23,25 @@
             </div>
         </div>
     </div>
+    
+    <div class="related-midi">
+        @defer (hydrate on viewport) {
+            <midi-list [loadItemsOfType]="'related'" [relatedMidiSlug]="midi.slug" [hideIfEmpty]="true" [loadOnScroll]="false" [context]="'midi'" [exclude]="[midi.slug]">
+                <h2 class="page-title" slot="before">Related</h2>
+            </midi-list>
+        }
+    </div>
+}
+
+
+@defer (hydrate on viewport) {
+    <midi-list [loadItemsOfType]="'user-related'" [hideIfEmpty]="true" [loadOnScroll]="false" [context]="'midi'" [exclude]="[midi?.slug]">
+        <h2 class="page-title" slot="before">You might also like</h2>
+    </midi-list>
 }
 
 @defer (hydrate on viewport) {
-    @if(relatedMidi().length > 0){
-        <div class="related-midi">
-            <h2 class="text-center">You might also like</h2>
-            <midi-list [items]="relatedMidi"></midi-list>
-        </div>
-    }
-}
-
-@defer (hydrate on viewport) {
-    @if (forYouMidiItems().length > 0) {
-        <h2 class="page-title">You may like</h2>
-        <midi-list #midiList [items]="forYouMidiItems"></midi-list>
-    }
-}
-
-@defer (hydrate on viewport) {
-    <h2 class="page-title">Latest</h2>
-    <midi-list-latest [filterOutItems]="forYouMidiItems"></midi-list-latest>
+    <midi-list [loadItemsOfType]="'latest'" [context]="'midi'" [exclude]="[midi?.slug]">
+        <h2 class="page-title" slot="before">Latest Midi Files</h2>
+    </midi-list>
 }

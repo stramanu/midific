@@ -61,8 +61,7 @@ mcl.json
 configuration.prod.ts
 environment.ts
 
-deploy-midi-files.sh
-deploy.sh
+deploy-*
 entrypoint-api.sh
 entrypoint-app.sh
 

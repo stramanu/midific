@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, ViewChild, WritableSignal, inject, signal, viewChild } from '@angular/core';
 import { AppService } from '../../service/app.service';
-import { PaymentComponent } from '../../core/payment/payment.component';
 import { StorageService } from '../../service/storage.service';
 import { MidiImgComponent } from '../../core/midi-img/midi-img.component';
 import { PlayButtonComponent } from '../../core/play-button/play-button.component';
@@ -9,7 +8,6 @@ import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from
 import { MidiCartDto, MidiDto, UserDto } from 'common';
 import { PaymentService } from '../../service/payment.service';
 import { MidiListComponent } from '../../core/midi-list/midi-list.component';
-import { MidiListLatestComponent } from '../../core/midi-list-latest/midi-list-latest.component';
 import { NgOptimizedImage } from '@angular/common';
 
 import { StripeElementsOptions, StripeExpressCheckoutElementOptions, StripePaymentElementOptions } from '@stripe/stripe-js';
@@ -30,7 +28,6 @@ import { ApiService } from '../../service/api.service';
       ReactiveFormsModule,
       MidiImgComponent,
       MidiListComponent,
-      MidiListLatestComponent,
       PlayButtonComponent,
       RouterLink,
       StripeElementsDirective,
@@ -85,9 +82,6 @@ export class CheckoutComponent implements OnInit {
 
   public stripe = injectStripe(environment.stripe.key);
   paying = signal(false);
-
-  @Input()
-  public forYouMidiItems: WritableSignal<MidiDto[]> = signal([])
 
   constructor() {
     // @ts-ignore

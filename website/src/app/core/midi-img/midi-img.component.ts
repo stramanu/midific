@@ -54,8 +54,16 @@ export class MidiImgComponent implements OnInit {
       this.imgMidiName.set('');
       return;
     }
-    if(midi.name.length < 20) {
-      this.imgMidiName.set((midi.name + " ").repeat(Math.ceil(20 / (midi.name.length + 1))).trim());
+    let minLength = 20;
+    let angleDegrees = 20;
+    if(this.isPlatformBrowser) {
+      let w = this.el.nativeElement.clientWidth || 200;
+      let h = Math.ceil(w * Math.tan(angleDegrees * Math.PI / 180));
+      let hypotenuse = Math.ceil(Math.sqrt(w*w + h*h));
+      minLength = hypotenuse / 10;
+    }
+    if(midi.name.length < minLength){
+      this.imgMidiName.set((midi.name + " ").repeat(Math.ceil(minLength / (midi.name.length + 1))).trim());
     }else{
       this.imgMidiName.set(midi.name);
     }

@@ -237,3 +237,25 @@ input {
     isolation: none;
 }
 
+
+
+
+[data-transition="to-checkout"] {
+    view-transition-name: to-checkout;
+	&::view-transition-old(to-checkout) {
+	}
+	&::view-transition-new(to-checkout) {
+		animation: maskExpand .4s ease-in forwards;
+		mask-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="2000" height="2000"%3E%3Ccircle cx="100%" cy="0%" r="1000" fill="white" /%3E%3C/svg%3E');
+        mask-origin: view-box;
+        mask-repeat: no-repeat;
+        mask-position: top right;
+        mask-size: 0% auto;
+	}
+}
+
+@keyframes maskExpand {
+	100% {
+		mask-size: 300% auto;
+	}
+}

@@ -3,31 +3,38 @@ import { MidiDto, Crypto } from 'common';
 import * as fs from 'fs';
 import { ImageTools } from '../../utils/image-tools';
 import { Midi } from './midi.entity';
-import { In, Like } from 'typeorm';
+import { In, Like, Not } from 'typeorm';
 import { CONFIG } from '../../config/configuration';
 
 const FS_BASE_PATH = process.env.PRODUCTION == 'true' ? '/app/api' : '';
 @Injectable()
 export class MidiService {
 
-    public async latestMidi(page = 0, limit = 10) {
+    public async latestMidi(page = 0, limit = 10, exclude: string[] = []) {
       return await Midi.find({
         skip: page * limit,
         take: limit,
         order: {
           chart: 'ASC',
           id: 'DESC'
+        },
+        where: {
+          slug: Not(In(exclude))
         }
       })
     }
 
-    public async forYouMidi(page = 0, limit = 6) {
+    public async userRelatedMidi(page = 0, limit = 6, exclude: string[] = []) {
+      console.log('userRelatedMidi exclude', exclude)
       return await Midi.find({
         skip: page * limit,
         take: limit,
         order: {
           chart: 'ASC',
           id: 'DESC'
+        },
+        where: {
+          slug: Not(In(exclude))
         }
         // TODO
       })
@@ -62,7 +69,7 @@ export class MidiService {
       })
     }
   
-    public async getRelatedMidi(slug: string, page = 0, limit = 10) {
+    public async getRelatedMidi(slug: string, page = 0, limit = 10, exclude: string[] = []) {
       const midi = await Midi.findOne({
         where: {
           slug
@@ -72,7 +79,7 @@ export class MidiService {
       if (!midi) {
         return []
       }
-      return midi.related.slice(page * limit, (page * limit) + limit).filter(m => m.id !== midi.id)
+      return midi.related.filter(m => m.id !== midi.id && !exclude.includes(m.slug)).slice(page * limit, (page * limit) + limit)
     }
   
     public async getMidiFile(slug: string) {

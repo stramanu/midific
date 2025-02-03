@@ -9,6 +9,8 @@ import { MagnetPointerService } from './service/ui-fx/magnet-pointer.service';
 import { CursorComponent } from './core/cursor/cursor.component';
 import { SplatFogService } from './service/ui-fx/splat-fog.service';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { TransitionService } from './service/transition.service';
+import { CheckoutComponent } from './page/checkout/checkout.component';
 
 @Component({
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -27,10 +29,12 @@ export class AppComponent implements OnInit {
 
   private isPlatformBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   public app = inject(AppService);
+  public transitionService = inject(TransitionService);
   private midiPlayerService = inject(MidiPlayerService);
   private magnetPointerService = inject(MagnetPointerService);
   private splatFogService = inject(SplatFogService)
-  private window = inject(DOCUMENT).defaultView!;
+  private document = inject(DOCUMENT);
+  private window = this.document.defaultView;
 
   public canvasfx = viewChild<ElementRef<HTMLCanvasElement>>('canvasfx');
 
@@ -51,6 +55,17 @@ export class AppComponent implements OnInit {
       const canvasfx = this.canvasfx()
       if (canvasfx) {
         this.splatFogService.init(canvasfx.nativeElement)
+      }
+    })
+    effect(() => {
+      const transitionInfo = this.transitionService.currentTransition();
+      switch (transitionInfo?.to.firstChild?.component) {
+        case CheckoutComponent:
+          this.document.body.setAttribute('data-transition', 'to-checkout');
+          break;
+        default:
+          this.document.body.setAttribute('data-transition', 'to-other');
+          break;
       }
     })
   }
@@ -79,5 +94,7 @@ export class AppComponent implements OnInit {
       }, 0.2)
     })
   }
+
+
 
 }

@@ -68,13 +68,13 @@
 <div class="divider"></div>
 
 @defer (hydrate on viewport) {
-    @if (forYouMidiItems().length > 0) {
-        <h2 class="page-title">You may like</h2>
-        <midi-list [items]="forYouMidiItems"></midi-list>
-    }
+    <midi-list [loadItemsOfType]="'user-related'" [hideIfEmpty]="true" [loadOnScroll]="false">
+        <h2 class="page-title" slot="before">You might also like</h2>
+    </midi-list>
 }
 
 @defer (hydrate on viewport) {
-    <h2 class="page-title">Latest</h2>
-    <midi-list-latest [filterOutItems]="forYouMidiItems"></midi-list-latest>   
+    <midi-list [loadItemsOfType]="'latest'">
+        <h2 class="page-title" slot="before">Latest Midi Files</h2>
+    </midi-list>
 }

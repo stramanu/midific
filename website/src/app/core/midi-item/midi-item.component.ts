@@ -8,7 +8,7 @@ import { MidiPlayerService } from '../../service/midi-player.service';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { PlayButtonComponent } from "../play-button/play-button.component";
 import { TransitionService } from '../../service/transition.service';
-import { LottieComponent, AnimationOptions } from 'ngx-lottie';
+import { LottieComponent, AnimationOptions, LottieTransferState } from 'ngx-lottie';
 
 @Component({
     selector: 'midi-item',
@@ -30,6 +30,8 @@ export class MidiItemComponent {
   public midiPlayer = inject(MidiPlayerService);
   private transitionService = inject(TransitionService);
 
+  private lottieTransferState = inject(LottieTransferState);
+
   private el = inject(ElementRef)
 
   public get isPlaying(){
@@ -38,8 +40,8 @@ export class MidiItemComponent {
 
   public addToCartLottie = {
     options: {
-      path: '/icons/anim-add-to-cart.json',
-      // animationData: this.lottieTransferState.get('/icons/anim-add-to-cart.lottie'),
+      // path: '/icons/anim-add-to-cart.json',
+      animationData: this.lottieTransferState.get('anim-add-to-cart.json'),
       loop: false,
       autoplay: true
     } as AnimationOptions,

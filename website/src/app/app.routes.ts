@@ -10,14 +10,14 @@ export const routes: Routes = [
     { 
         path: '',
         loadComponent: () => import('./page/home/home.component').then(m => m.HomeComponent),
-        resolve: {
-            latestMidiItems: async () => {
-                // tieni conto dello scroll per ripristinare la pagina e ricaricare tutti gli elementi non utili
-                return signal<MidiDto[]>(await inject(ApiService).latestMidi(0, (inject(StorageService).home.latestItemsPage() +1) * 18))
-            },
-            forYouMidiItems: async () => 
-                signal<MidiDto[]>(await inject(ApiService).forYouMidi())
-        }
+        // resolve: {
+        //     latestMidiItems: async () => {
+        //         // tieni conto dello scroll per ripristinare la pagina e ricaricare tutti gli elementi non utili
+        //         return signal<MidiDto[]>(await inject(ApiService).latestMidi(0, (inject(StorageService).home.latestItemsPage() +1) * 18))
+        //     },
+        //     forYouMidiItems: async () => 
+        //         signal<MidiDto[]>(await inject(ApiService).getUserRelatedMidi())
+        // }
     },{ 
         path: 'search/:query',
         loadComponent: () => import('./page/search/search.component').then(m => m.SearchComponent),
@@ -39,19 +39,19 @@ export const routes: Routes = [
                 const slug = route.params['slug'] || '';
                 return await api.getMidi(slug);
             },
-            forYouMidiItems: async (route: ActivatedRouteSnapshot) => {
-                const slug = route.params['slug'] || '';
-                return signal<MidiDto[]>((await inject(ApiService).forYouMidi()).filter(m => m.slug !== slug));
-            }
+            // forYouMidiItems: async (route: ActivatedRouteSnapshot) => {
+            //     const slug = route.params['slug'] || '';
+            //     return signal<MidiDto[]>((await inject(ApiService).getUserRelatedMidi()).filter(m => m.slug !== slug));
+            // }
         }
     },{ 
         path: 'checkout',
         loadComponent: () => import('./page/checkout/checkout.component').then(m => m.CheckoutComponent),
-        resolve: {
-            forYouMidiItems: async (route: ActivatedRouteSnapshot) => {
-                return signal<MidiDto[]>(await inject(ApiService).forYouMidi());
-            }
-        }
+        // resolve: {
+        //     forYouMidiItems: async (route: ActivatedRouteSnapshot) => {
+        //         return signal<MidiDto[]>(await inject(ApiService).getUserRelatedMidi());
+        //     }
+        // }
     },{ 
         path: 'privacy-policy',
         loadComponent: () => import('./page/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent)

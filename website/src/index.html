@@ -44,6 +44,13 @@
 
 </head>
 <body data-theme="light">
+  <script>
+    const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.body.setAttribute('data-theme', theme);
+    if (!localStorage.getItem('theme')) {
+      localStorage.setItem('theme', theme);
+    }
+  </script>
   <app-root></app-root>
 </body>
 </html>
