@@ -11,7 +11,10 @@ import auth from 'basic-auth';
 import cors from 'cors';
 import http from 'http';
 import https from 'https';
+import { provideServerRendering } from '@angular/platform-server';
+import cookieParser from 'cookie-parser';
 import compression from 'compression';
+
 
 http.globalAgent.maxSockets = Infinity;
 https.globalAgent.maxSockets = Infinity;
@@ -20,7 +23,9 @@ const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+const angularApp = new AngularNodeAppEngine()
+
+app.use(cookieParser());
 
 app.use(compression());
 
@@ -72,16 +77,23 @@ app.use(
 );
 
 /**
- * Handle all other requests by rendering the Angular application.
+ * Handle all other requests by rendering the Angular application. Added support for server-side rendering cookies.
  */
 app.use('/**', (req, res, next) => {
   angularApp
-    .handle(req)
+    .handle(req, {
+      providers: [
+        provideServerRendering(),
+        { provide: 'REQUEST', useValue: req },
+        { provide: 'RESPONSE', useValue: res },
+      ],
+    })
     .then((response) =>
       response ? writeResponseToNodeResponse(response, res) : next(),
     )
     .catch(next);
 });
+
 
 /**
  * Start the server if this module is the main entry point.

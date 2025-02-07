@@ -1,7 +1,7 @@
 @if(midi != null){
     <div class="midi">
         <div class="main-info magnetic">
-            <midi-img [midi]="midi" [priority]="true"></midi-img>
+            <midi-img [midi]="midi" [priority]="true" [class]="{'transition': transition}"></midi-img>
         </div>
         <div class="midi-info">
             <player-widget [midi]="midi" [audioContext]="audioContext" class="magnetic"></player-widget>
@@ -26,7 +26,7 @@
     
     <div class="related-midi">
         @defer (hydrate on viewport) {
-            <midi-list [loadItemsOfType]="'related'" [relatedMidiSlug]="midi.slug" [hideIfEmpty]="true" [loadOnScroll]="false" [context]="'midi'" [exclude]="[midi.slug]">
+            <midi-list [loadItemsOfType]="'related'" [relatedMidiSlug]="midi.slug" [hideIfEmpty]="true" [loadOnScroll]="false" [context]="'midi'" [exclude]="[_midi]">
                 <h2 class="page-title" slot="before">Related</h2>
             </midi-list>
         }
@@ -35,13 +35,13 @@
 
 
 @defer (hydrate on viewport) {
-    <midi-list [loadItemsOfType]="'user-related'" [hideIfEmpty]="true" [loadOnScroll]="false" [context]="'midi'" [exclude]="[midi?.slug]">
+    <midi-list [loadItemsOfType]="'user-related'" [hideIfEmpty]="true" [loadOnScroll]="false" [context]="'midi'" [exclude]="[_midi]">
         <h2 class="page-title" slot="before">You might also like</h2>
     </midi-list>
 }
 
 @defer (hydrate on viewport) {
-    <midi-list [loadItemsOfType]="'latest'" [context]="'midi'" [exclude]="[midi?.slug]">
+    <midi-list [loadItemsOfType]="'latest'" [context]="'midi'" [exclude]="[_midi]">
         <h2 class="page-title" slot="before">Latest Midi Files</h2>
     </midi-list>
 }

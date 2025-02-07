@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, Signal, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, Input, Signal, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { ApiService } from '../../service/api.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MidiDto } from 'common';
@@ -8,6 +8,7 @@ import { AppService } from '../../service/app.service';
 import { MidiListComponent } from '../../core/midi-list/midi-list.component';
 import { PlayerWidgetComponent } from '../../core/player-widget/player-widget.component';
 import { MidiPlayerService } from '../../service/midi-player.service';
+import { TransitionService } from '../../service/transition.service';
 
 @Component({
     selector: 'app-midi',
@@ -25,10 +26,10 @@ export class MidiComponent {
 
   private api = inject(ApiService);
   public app = inject(AppService);
-  private route = inject(ActivatedRoute);
+  private transitionService = inject(TransitionService);
   private midiPlayerService = inject(MidiPlayerService);
 
-  private _midi = signal<MidiDto|null>(null);
+  public _midi = signal<MidiDto|null>(null);
 
   @Input()
   public set midi(midi: MidiDto|null) {
@@ -44,6 +45,15 @@ export class MidiComponent {
   // });
 
   public audioContext = this.midiPlayerService.audioContext
+
+  public get transition() {
+    const transitionInfo = this.transitionService.currentTransition();
+    return transitionInfo?.to.firstChild?.params['slug'] === this.midi?.slug;
+  }
+  // public transition = computed(() => {
+  //   const transitionInfo = this.transitionService.currentTransition();
+  //   return !transitionInfo?.transition.finished && transitionInfo?.to.firstChild?.params['slug'] === this.midi?.slug;
+  // });
 
   constructor() {
     effect(() => {

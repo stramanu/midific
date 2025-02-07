@@ -151,12 +151,12 @@ export class CheckoutComponent implements OnInit {
 
   async checkout() {
     console.log('checkout', this.store.cart.items().filter(i => i.checked).map(i => i.slug))
-    const result = await this.payment.createCheckoutSession(this.store.cart.items().filter(i => i.checked).map(i => i.slug));
-    if (result.error) {
-      console.error(result.error)
-      return
-    }
-    console.log(result)
+    // const result = await this.payment.createCheckoutSession(this.store.cart.items().filter(i => i.checked).map(i => i.slug));
+    // if (result.error) {
+    //   console.error(result.error)
+    //   return
+    // }
+    // console.log(result)
   }
 
 }

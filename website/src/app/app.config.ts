@@ -32,6 +32,7 @@ export const baseAppConfig: ApplicationConfig = {
       })
     ),
     provideHttpClient(withFetch()),
+    // CookieService,
     provideNgxStripe(),
     provideLottieOptions({
       player: () => import('lottie-web')

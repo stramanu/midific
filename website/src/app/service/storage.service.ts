@@ -1,9 +1,12 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID, Signal, computed, effect, inject, signal } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { Injectable, PLATFORM_ID, inject, signal, effect } from '@angular/core';
 import { UserDto, MidiCartDto } from 'common';
+import { SsrCookieService } from 'ngx-cookie-service-ssr';
 
-// random alphanum key for local storage
 const LOCAL_STORAGE_KEY = 'b04235e2-120d';
+const COOKIE_KEY = 'b04235e2-120d';
+
+type Theme = 'light' | 'dark';
 
 interface LocalStorageData {
   user: UserDto,
@@ -13,8 +16,11 @@ interface LocalStorageData {
   },
   home: {
     latestItemsPage: number
-  },
-  theme: 'light' | 'dark'
+  }
+}
+
+interface CookieData {
+  theme: Theme
 }
 
 const LOCAL_STORAGE_INIT: LocalStorageData = {
@@ -27,7 +33,10 @@ const LOCAL_STORAGE_INIT: LocalStorageData = {
   },
   home: {
     latestItemsPage: 0
-  },
+  }
+}
+
+const COOKIES_INIT: CookieData = {
   theme: 'light'
 }
 
@@ -35,43 +44,52 @@ const LOCAL_STORAGE_INIT: LocalStorageData = {
   providedIn: 'root'
 })
 export class StorageService {
-
-  private isPlatformBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  
   private window = inject(DOCUMENT).defaultView!;
-  private localStorage!: Storage
+  private cookieService = inject(SsrCookieService);
 
+  // Local storage and cookie access methods
   private readonly local = {
-    get: () => (this.localStorage ? JSON.parse(this.localStorage.getItem(LOCAL_STORAGE_KEY) || JSON.stringify(LOCAL_STORAGE_INIT)) : LOCAL_STORAGE_INIT) as LocalStorageData,
-    set: (data: LocalStorageData) => this.localStorage?.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data))
+    get: () => (this.window.localStorage ? JSON.parse(this.window.localStorage.getItem(LOCAL_STORAGE_KEY) || JSON.stringify(LOCAL_STORAGE_INIT)) : LOCAL_STORAGE_INIT) as LocalStorageData,
+    set: (data: LocalStorageData) => this.window.localStorage?.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data))
+  }
+  private readonly cookie = {
+    get: () => (this.cookieService.check(COOKIE_KEY) ? JSON.parse(this.cookieService.get(COOKIE_KEY) || JSON.stringify(COOKIES_INIT)) : COOKIES_INIT) as CookieData,
+    set: (data: CookieData) => this.cookieService.set(COOKIE_KEY, JSON.stringify(data), { path: '/' })
   }
 
+  // Local storage signals
   public readonly user = signal<UserDto>(LOCAL_STORAGE_INIT.user)
-
   public readonly cart = {
     items: signal<MidiCartDto[]>(LOCAL_STORAGE_INIT.cart.items),
     total: signal<number>(LOCAL_STORAGE_INIT.cart.total)
   }
-
   public readonly home = {
-    latestItemsPage: signal<number>(0)
+    latestItemsPage: signal<number>(LOCAL_STORAGE_INIT.home.latestItemsPage)
   }
 
-  public readonly theme = signal<'light' | 'dark'>(LOCAL_STORAGE_INIT.theme)
+  // Cookie signals
+  public readonly theme = signal<Theme>(COOKIES_INIT.theme)
 
   constructor() {
-    if(this.isPlatformBrowser) {
-      (this.window as any).StorageService = this;
-      this.localStorage = this.window?.localStorage;
-    }
-    const data = this.local.get();
-    this.user.set(data.user);
-    this.cart.items.set(data.cart.items);
-    this.theme.set(data.theme);
+
+    // Init signal values from local storage and cookies
+    
+    const local = this.local.get();
+    this.user.set(local.user);
+    this.cart.items.set(local.cart.items);
+    
+    const cookies = this.cookie.get();
+    this.theme.set(cookies.theme);
+
     effect(() => {
+      
+      // Update local storage when signals change
       const items = this.cart.items()
       let total = items.reduce((acc, item) => item.checked ? acc + item.price : acc, 0)
       total = Math.round(total * 100) / 100
       this.cart.total.set(total)
+
       this.local.set({
         user: this.user(),
         cart: {
@@ -80,10 +98,15 @@ export class StorageService {
         },
         home: {
           latestItemsPage: this.home.latestItemsPage()
-        },
+        }
+      });
+        
+      // Update cookies when signals change
+
+      this.cookie.set({
         theme: this.theme()
       });
+
     });
   }
-
 }

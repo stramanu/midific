@@ -25,7 +25,6 @@ export class MidiService {
     }
 
     public async userRelatedMidi(page = 0, limit = 6, exclude: string[] = []) {
-      console.log('userRelatedMidi exclude', exclude)
       return await Midi.find({
         skip: page * limit,
         take: limit,
@@ -36,8 +35,15 @@ export class MidiService {
         where: {
           slug: Not(In(exclude))
         }
-        // TODO
       })
+      // const query = Midi.createQueryBuilder("midi")
+      //   .where(exclude.length > 0 ? "midi.slug NOT IN (:exclude)" : "1=1", { exclude: exclude.join(',') })
+      //   .skip(page * limit)
+      //   .take(limit)
+      //   .orderBy("midi.chart", "ASC")
+      //   .addOrderBy("midi.id", "DESC");
+
+      // return await query.getMany();
     }
 
     public async searchMidi(query: string, page = 0, limit = 10) {

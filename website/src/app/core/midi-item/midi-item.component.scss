@@ -11,7 +11,7 @@
             width: 100%;
             aspect-ratio: 1 / 1;
             box-sizing: border-box;
-            &.view-transition {
+            &.transition {
                 view-transition-name: midi-image;
             }
         }
@@ -35,11 +35,11 @@
 
     &.transition {
         --fade-in-delay: 0!important;
-        .image{
-            midi-img {
-                view-transition-name: midi-image;
-            }
-        }
+        // .image{
+        //     midi-img {
+        //         view-transition-name: midi-image;
+        //     }
+        // }
     }
         
     .info {

@@ -24,33 +24,32 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="#121212">
 
   <!-- seo meta -->
-  <meta name="description" content="MIDIFIC is a platform for musicians to find and share MIDI files.">
-  <meta name="keywords" content="midi, music, musician, file, share, download, free, platform">
+  <meta name="description" content="MIDIFIC is a platform for musicians to find and buy MIDI files.">
+  <meta name="keywords" content="midi, music, musician, file, buy, download, free, platform">
   <meta name="author" content="MIDIFIC">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.midific.com">
+  
+  <!-- Open Graph Meta Tags -->
   <meta property="og:title" content="MIDIFIC">
-  <meta property="og:description" content="MIDIFIC is a platform for musicians to find and share MIDI files.">
+  <meta property="og:description" content="MIDIFIC is a platform for musicians to find and buy MIDI files.">
   <meta property="og:image" content="https://www.midific.com/assets/images/logo.png">
   <meta property="og:url" content="https://www.midific.com">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="MIDIFIC">
+
+  <!-- Twitter Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@midific">
   <meta name="twitter:creator" content="@midific">
   <meta name="twitter:title" content="MIDIFIC">
-  <meta name="twitter:description" content="MIDIFIC is a platform for musicians to find and share MIDI files.">
+  <meta name="twitter:description" content="MIDIFIC is a platform for musicians to find and buy MIDI files.">
   <meta name="twitter:image" content="https://www.midific.com/assets/images/logo.png">
   
   <link rel="preconnect" href="https://api.midific.com">
 
 </head>
 <body data-theme="light">
-  <script>
-    const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.body.setAttribute('data-theme', theme);
-    if (!localStorage.getItem('theme')) {
-      localStorage.setItem('theme', theme);
-    }
-  </script>
   <app-root></app-root>
 </body>
 </html>

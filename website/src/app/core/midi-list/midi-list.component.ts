@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit, Output, Signal, WritableSignal, computed, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit, Output, Signal, WritableSignal, computed, effect, inject, resource, signal } from '@angular/core';
 import { MidiDto } from 'common';
 import { MidiItemComponent } from '../midi-item/midi-item.component';
 import { RouterLink } from '@angular/router';
@@ -37,22 +37,53 @@ export class MidiListComponent implements OnInit, OnDestroy {
 
   public el = inject(ElementRef<HTMLDivElement>);
 
-  public syncLoadItems = syncRun(async () => await this.loadItems());
+  public itemsReload = syncRun(() => this.itemsUi.reload()) 
 
   @Input()
   public items: WritableSignal<MidiDto[]> = signal([])
+
+  private prevItems: MidiDto[] = []
   
-  public _items: WritableSignal<MidiDto[]> = signal([])
-  public itemsUi = computed(() => this._items().filter(m => !this.filterOutItems().find(f => f.slug === m.slug)))
+  public itemsUi = resource({
+    loader: async ({ request, abortSignal }) => {
+      // this.app.loading.set(true);
+      const inputItems = this.items();
+      if (inputItems.length > 0) {
+        return inputItems;
+      } else 
+      if (this.loadItemsOfType != null) {
+        let items: MidiDto[] = [];
+        if(this.loadOnScroll) {
+          items = this.prevItems;
+          this.itemsPage.update(page => page + 1);
+        }
+        switch (this.loadItemsOfType) {
+          case 'related':
+            items = [...items, ...await this.api.getRelatedMidi(this.relatedMidiSlug, 0, RELATED_MIDI_LIMIT, this.excludeSlugs, abortSignal)];
+            break;
+          case 'user-related':
+            items = [...items, ...await this.api.getUserRelatedMidi(this.itemsPage(), USER_RELATED_MIDI_LIMIT, this.excludeSlugs, abortSignal)];
+            break;
+          case 'latest':
+            items = [...items, ...await this.api.latestMidi(this.itemsPage(), LATEST_MIDI_LIMIT, this.excludeSlugs, abortSignal)];
+            break;
+        }
+        // this.app.loading.set(false);
+        if(this.loadOnScroll) {
+          this.prevItems = items;
+        }
+        return items
+      } else {
+        return this.prevItems = []
+      }
+    },
+  });
 
   @Output()
-  public isEmpty = computed(() => this.itemsUi().length === 0)
+  public isEmpty = computed(() => this.itemsUi.hasValue() && this.itemsUi.value()?.length === 0)
 
   @Input()
   public loadItemsOfType: 'latest'|'related'|'user-related'|null = null
-
-  @Input()
-  public filterOutItems: WritableSignal<MidiDto[]> = signal([])
 
   @Input()
   public itemsPage: WritableSignal<number> = signal(0)
@@ -70,20 +101,25 @@ export class MidiListComponent implements OnInit, OnDestroy {
   public context = 'default'
 
   @Input()
-  public exclude: (string|undefined)[] = []
+  public exclude: (Signal<MidiDto|null>|undefined)[] = []
 
-  private get excludeSlugs() {
-    let exclude = this.exclude.filter(e => e) as string[];
-    const toIdx = MidiListComponent.contexts[this.context].indexOf(this) - 1;
-    if (toIdx < 0) return exclude;
-    return [...exclude, ...MidiListComponent.contexts[this.context].slice(0, toIdx).reduce((acc, c) => [...acc, ...c.items().map(i => i.slug)], [] as string[])]
-  }
+  private excludeSlugs: string[] = []
 
   constructor() {
     effect(() => {
-      const itemsCount = this._items().length;
+      this.items();
+      this.itemsReload();
+    })
+    effect(() => {
+      const excludeSlugs = this.computeExcludeSlugs();
+      if (JSON.stringify(excludeSlugs) === JSON.stringify(this.excludeSlugs)) return;
+      this.excludeSlugs = excludeSlugs;
+      this.itemsReload();
+    })
+    effect(() => {
+      const itemsCount = this.itemsUi.value()?.length || 0;
       this.el.nativeElement.style.display = this.hideIfEmpty && itemsCount === 0 ? 'none' : '';
-      this.itemsFadeInDelay = Array(this._items().length).fill(0).map((_, i) => {
+      this.itemsFadeInDelay = Array(itemsCount).fill(0).map((_, i) => {
         const fill = itemsCount - FADE_FX_LATEST_ITEMS
         if (i >= fill) {
           let delay = ((i - fill) * 0.1)
@@ -101,15 +137,24 @@ export class MidiListComponent implements OnInit, OnDestroy {
       MidiListComponent.contexts[this.context] = []
     }
     MidiListComponent.contexts[this.context].push(this)
-    if (this.items().length > 0) {
-      this._items.set(this.items());
-    }else if (this.loadItemsOfType != null && this.items().length === 0) {
-      this.syncLoadItems();
-    }
+    this.excludeSlugs = this.computeExcludeSlugs();
   }
 
   ngOnDestroy() {
     MidiListComponent.contexts[this.context] = MidiListComponent.contexts[this.context].filter(c => c !== this)
+  }
+
+  private computeExcludeSlugs() {
+    const exclude = this.exclude.filter(e => !!e).map(e => e!()?.slug).filter(s => !!s) as string[];
+    const toIdx = MidiListComponent.contexts[this.context].indexOf(this) - 1;
+    if (toIdx < 0) {
+      return exclude;
+    }else{
+      return [
+        ...exclude,
+        ...MidiListComponent.contexts[this.context].slice(0, toIdx).reduce((acc, c) => [...acc, ...c.items().map(i => i.slug)], [] as string[])
+      ]
+    }
   }
 
   @HostListener('document:scroll', ['$event'])
@@ -119,33 +164,8 @@ export class MidiListComponent implements OnInit, OnDestroy {
     const midiListEl = this.el.nativeElement;
     const scrollTop = (event.target as Document).documentElement.scrollTop;
     if (midiListEl && scrollTop > midiListEl.offsetTop + midiListEl.scrollHeight - document.documentElement.clientHeight - 500) {
-      this.syncLoadItems();
+      this.itemsReload();
     }
   }
-
-  async loadItems() {
-    this.app.loading.set(true);
-    const items = this._items();
-    this.itemsPage.update(page => page + 1);
-
-    let newItems: MidiDto[] = [];
-
-    switch (this.loadItemsOfType) {
-      case 'related':
-        newItems = await this.api.getRelatedMidi(this.relatedMidiSlug, 0, RELATED_MIDI_LIMIT, this.excludeSlugs);
-        break;
-      case 'user-related':
-        newItems = await this.api.getUserRelatedMidi(this.itemsPage(), USER_RELATED_MIDI_LIMIT, this.excludeSlugs);
-        break;
-      case 'latest':
-        newItems = await this.api.latestMidi(this.itemsPage(), LATEST_MIDI_LIMIT, this.excludeSlugs);
-        break;
-    }
-    
-    this._items.set([...items, ...newItems]);
-    this.app.loading.set(false);
-  }
-
-
 
 }

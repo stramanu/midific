@@ -25,7 +25,7 @@ export class PaymentService {
   ************************************************************************/
 
   public async createCheckoutSession(midiSlugs: string[]) {
-    return await this.api.createCheckoutSession(this.stripe, midiSlugs);
+    // return await this.api.createCheckoutSession(this.stripe, midiSlugs);
   }
 
 }

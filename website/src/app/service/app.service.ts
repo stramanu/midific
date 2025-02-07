@@ -45,11 +45,12 @@ export class AppService {
     this.userAgent = this.isPlatformBrowser ? this.window.navigator.userAgent : this.request?.headers['user-agent'] || '';
     this.isMobile = this.userAgent ? Boolean(new MobileDetect(this.userAgent).mobile()) : false;
 
-    this.updateTheme()
     if (this.isPlatformBrowser) {
       this.initPointerEvents();
       this.initWindowEvents();
     }
+
+    this.updateTheme()
   }
 
   public pointerEvents = {

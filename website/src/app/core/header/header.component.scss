@@ -4,7 +4,7 @@
     top: 0;
     z-index: 1;
     background: var(--header-background);
-    transition: background 0.3s;
+    transition: background 0.3s, box-shadow 0.3s;
     backdrop-filter: blur(15px);
     padding: 1rem 1.5rem;
     @include mix.mobile {

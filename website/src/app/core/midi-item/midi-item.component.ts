@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, inject } from '@angular/core';
+import { Component, ElementRef, Input, Signal, WritableSignal, inject, isSignal, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MidiDto } from 'common';
 import { MidiImgComponent } from '../midi-img/midi-img.component';
@@ -35,7 +35,8 @@ export class MidiItemComponent {
   private el = inject(ElementRef)
 
   public get isPlaying(){
-    return this.midiPlayer.isPlayingMidi(this.midi);
+    const midi = this.midi();
+    return midi != null ? this.midiPlayer.isPlayingMidi(midi) : false;
   }
 
   public addToCartLottie = {
@@ -55,17 +56,26 @@ export class MidiItemComponent {
   @Input()
   priority = false;
 
-  @Input()
-  public midi!: MidiDto
+  private _midi = signal<MidiDto|null>(null);
 
-  public viewTransition() {
+  @Input()
+  public set midi(midi: (MidiDto|null)|WritableSignal<MidiDto|null>) {
+    if(isSignal(midi)){
+      this._midi = midi;
+    }else{
+      this._midi.set(midi);
+    }
+  }
+  public get midi(): WritableSignal<MidiDto|null>{
+    return this._midi;
+  }
+
+  public get transition() {
     const transitionInfo = this.transitionService.currentTransition();
-    // If we're transitioning to or from the midi's detail page, add the `midi-image` transition name.
-    // This allows the browser to animate between the specific midi image from the list and its image on the detail page.
-    const transition = transitionInfo?.to.firstChild?.params['slug'] === this.midi.slug || transitionInfo?.from.firstChild?.params['slug'] === this.midi.slug;
+    const transition = transitionInfo?.to.firstChild?.params['slug'] === this.midi()?.slug;
     (this.el.nativeElement as HTMLElement).classList.toggle('transition', transition)
     if(transition){
-      this.priority = true; // TODO
+      this.priority = true;
     }
     return transition
   }
@@ -74,7 +84,10 @@ export class MidiItemComponent {
     event.preventDefault();
     event.stopPropagation();
     this.addToCartLottie.show = true;
-    this.app.addToCart(this.midi, event);
+    const midi = this.midi();
+    if(midi != null){
+      this.app.addToCart(midi, event);
+    }
   }
 
   public goToCart(event: MouseEvent){

@@ -10,18 +10,18 @@ export class MidiController {
     ) {}
     
     @Get('user-related')
-    async userRelatedMidi(@Query('page', ParseIntPipe) page: number, @Query('limit', ParseIntPipe) limit: number, @Query('exclude') exclude: string[]) {
-      return await this.midiService.userRelatedMidi(page, limit, exclude)
+    async userRelatedMidi(@Query('page', ParseIntPipe) page: number, @Query('limit', ParseIntPipe) limit: number, @Query('exclude') exclude: string) {
+      return await this.midiService.userRelatedMidi(page, limit, JSON.parse(exclude));
     }
 
     @Get('latest')
-    async latestMidi(@Query('page', ParseIntPipe) page: number, @Query('limit', ParseIntPipe) limit: number, @Query('exclude') exclude: string[]) {
-      return await this.midiService.latestMidi(page, limit, exclude);
+    async latestMidi(@Query('page', ParseIntPipe) page: number, @Query('limit', ParseIntPipe) limit: number, @Query('exclude') exclude: string) {
+      return await this.midiService.latestMidi(page, limit, JSON.parse(exclude));
     }
     
     @Get(':slug/related')
-    async getRelatedMidi(@Param('slug') slug: string, @Query('page', ParseIntPipe) page: number, @Query('limit', ParseIntPipe) limit: number, @Query('exclude') exclude: string[]) {
-      return await this.midiService.getRelatedMidi(slug, page, limit, exclude);
+    async getRelatedMidi(@Param('slug') slug: string, @Query('page', ParseIntPipe) page: number, @Query('limit', ParseIntPipe) limit: number, @Query('exclude') exclude: string) {
+      return await this.midiService.getRelatedMidi(slug, page, limit, JSON.parse(exclude));
     }
     
     @Get('search')

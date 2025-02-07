@@ -1,37 +1,40 @@
-<div class="image">
-    <midi-img [midi]="midi" [priority]="priority" [class]="{'view-transition': viewTransition()}"></midi-img>
-    <play-button [midi]="midi"></play-button>
-</div>
-<div class="info">
-    <div class="title" routerLink="/midi/{{ midi.slug }}" [title]="midi.name">
-        <b>
-            {{ midi.name }}
-        </b>
+@let midiItem = midi();
+@if (midiItem) {
+    <div class="image">
+        <midi-img [midi]="midi()" [priority]="priority" [class]="{'transition': transition}"></midi-img>
+        <play-button class="magnetic" [midi]="midiItem"></play-button>
     </div>
-    <p class="price">
-        ${{ midi.price }}
-    </p>
-    @if (app.isPlatformBrowser) {
-        <!-- <button class="btn btn-secondary" (click)="goToCart($event)" title="Go to Cart">
-            <img class="icon-cart" width="20" height="20" ngSrc="/icons/bag.svg" alt="Go to Cart" />
-            Go to Cart
-            <ng-lottie width="100px" height="30px" [options]="addToCartLottie" />
-        </button> -->
-        <div [class]="{'add-to-cart': true, 'animate': addToCartLottie.show, 'magnetic': true}">
-            @if(app.isInCart(midi)) {
-                <div [class]="{'animation-wrapper': true}">
-                    <button class="btn btn-transparent" routerLink="/checkout" title="Proceed to checkout">
-                        <ng-lottie [options]="addToCartLottie.options" (complete)="addToCartLottie.complete()" />
-                        Proceed to checkout
+    <div class="info">
+        <div class="title" routerLink="/midi/{{ midiItem.slug }}" [title]="midiItem.name">
+            <b>
+                {{ midiItem.name }}
+            </b>
+        </div>
+        <p class="price">
+            ${{ midiItem.price }}
+        </p>
+        @if (app.isPlatformBrowser) {
+            <!-- <button class="btn btn-secondary" (click)="goToCart($event)" title="Go to Cart">
+                <img class="icon-cart" width="20" height="20" ngSrc="/icons/bag.svg" alt="Go to Cart" />
+                Go to Cart
+                <ng-lottie width="100px" height="30px" [options]="addToCartLottie" />
+            </button> -->
+            <div [class]="{'add-to-cart': true, 'animate': addToCartLottie.show, 'magnetic': true}">
+                @if(app.isInCart(midiItem)) {
+                    <div [class]="{'animation-wrapper': true}">
+                        <button class="btn btn-transparent" routerLink="/checkout" title="Proceed to checkout">
+                            <ng-lottie [options]="addToCartLottie.options" (complete)="addToCartLottie.complete()" />
+                            Proceed to checkout
+                        </button>
+                    </div>
+                }
+                <div class="button-wrapper">
+                    <button [class]="{'btn': true, 'btn-primary': true, 'hide': app.isInCart(midiItem) || addToCartLottie.show}" (click)="addToCart($event)" title="Add to Cart">
+                        <img class="icon-cart" width="20" height="20" ngSrc="/icons/bag.svg" alt="Bag" />
+                        <span>Add to Cart</span>
                     </button>
                 </div>
-            }
-            <div class="button-wrapper">
-                <button [class]="{'btn': true, 'btn-primary': true, 'hide': app.isInCart(midi) || addToCartLottie.show}" (click)="addToCart($event)" title="Add to Cart">
-                    <img class="icon-cart" width="20" height="20" ngSrc="/icons/bag.svg" alt="Bag" />
-                    <span>Add to Cart</span>
-                </button>
             </div>
-        </div>
-    }
-</div>
+        }
+    </div>
+}
